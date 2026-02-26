@@ -1,141 +1,153 @@
-/**
- * 1. IManageable (Interface)
- * Purpose: Defines a standard contract for database operations[cite: 2, 3].
- */
-class IManageable {
-    constructor() {
-        if (this.constructor === IManageable) {
-            throw new Error("Interface 'IManageable' cannot be instantiated.");
-        }
-    }
-    saveData() { throw new Error("Method 'saveData()' must be implemented."); } [cite: 7]
-    deleteData() { throw new Error("Method 'deleteData()' must be implemented."); } [cite: 8]
+// Interface 1: As per your design [cite: 2, 4]
+interface IManageable {
+    void saveData(); // Pure virtual equivalent [cite: 7]
+    void deleteData(); // Pure virtual equivalent [cite: 8]
 }
 
-/**
- * 2. Person (Abstract Class)
- * Purpose: Base for all human-related classes[cite: 9, 11].
- */
-class Person {
-    static totalPeopleCount = 0; // Class (Static) attribute [cite: 16]
+// Interface 2: For billing systems
+interface IBillable {
+    void calculateFinalCharges(); 
+    void printInvoice();
+}
+// Abstract Class 1: Person [cite: 9]
+abstract class Person {
+    private String name; // Encapsulation [cite: 14]
+    private int age; // [cite: 14]
+    private String contactInfo; // [cite: 14]
+    static int totalPeopleCount = 0; // Static tracker [cite: 16]
 
-    constructor(name, age, contactInfo) {
-        if (this.constructor === Person) {
-            throw new Error("Abstract class 'Person' cannot be instantiated.");
-        }
-        // Encapsulation: Private-like attributes using underscores
-        this._name = name; [cite: 14]
-        this._age = age; [cite: 14]
-        this._contactInfo = contactInfo; [cite: 14]
-        Person.totalPeopleCount++; [cite: 16]
+    public Person(String name, int age, String contactInfo) {
+        this.name = name; // Use of 'this' [cite: 18]
+        this.age = age;
+        this.contactInfo = contactInfo;
+        totalPeopleCount++;
     }
 
     // Concrete method [cite: 21]
-    updateContact(newContact) {
-        this._contactInfo = newContact;
-        console.log(`Contact updated for ${this._name}`);
+    public void updateContact(String newContact) {
+        this.contactInfo = newContact;
+        System.out.println("Contact updated for: " + this.name);
     }
 
-    // Pure virtual method [cite: 19]
-    performRole() {
-        throw new Error("Method 'performRole()' must be implemented.");
+    public abstract void performRole(); // Pure virtual [cite: 19]
+    
+    // Getters for Encapsulation
+    public String getName() { return name; }
+}
+
+// Abstract Class 2: Facility
+abstract class HospitalFacility {
+    protected String locationBlock;
+
+    public HospitalFacility(String block) {
+        this.locationBlock = block;
+    }
+
+    public abstract void performMaintenance();
+}
+// Concrete Class 1: Patient [cite: 22]
+class Patient extends Person implements IBillable {
+    private String patientID; // [cite: 27]
+    private String ailment; // [cite: 27]
+    private double billAmount; // [cite: 27]
+
+    public Patient(String n, int a, String c, String id, String ailment) {
+        super(n, a, c); // Use of 'super' [cite: 29]
+        this.patientID = id;
+        this.ailment = ailment;
+    }
+
+    @Override
+    public void performRole() { // Method overriding [cite: 29]
+        System.out.println("Patient " + getName() + " is currently in recovery for " + ailment);
+    }
+
+    @Override
+    public void calculateFinalCharges() { // [cite: 30]
+        this.billAmount = 500.00; 
+        System.out.println("Charges calculated for ID: " + patientID);
+    }
+
+    @Override
+    public void printInvoice() {
+        System.out.println("Invoice for " + getName() + ": $" + billAmount);
     }
 }
 
-/**
- * 3. Patient (Concrete Class)
- * Inherits from Person[cite: 22, 23].
- */
-class Patient extends Person {
-    constructor(name, age, contactInfo, patientID, ailment) {
-        super(name, age, contactInfo); // Constructor usage [cite: 29]
-        this._patientID = patientID; [cite: 27]
-        this._ailment = ailment; [cite: 27]
-        this._billAmount = 0.0; [cite: 27]
+// Concrete Class 2: Doctor [cite: 31]
+class Doctor extends Person implements IManageable {
+    private String employeeID; // [cite: 34]
+    private String specialization; // [cite: 34]
+
+    public Doctor(String n, int a, String c, String id, String spec) {
+        super(n, a, c); // [cite: 36]
+        this.employeeID = id;
+        this.specialization = spec;
     }
 
-    // Method Overriding [cite: 29]
-    performRole() {
-        console.log(`Patient ${this._name} is recovering from ${this._ailment}.`);
+    @Override
+    public void performRole() { // [cite: 36]
+        System.out.println("Dr. " + getName() + " is performing a " + specialization + " consultation.");
     }
 
-    payBill(amount) { [cite: 30]
-        this._billAmount = amount;
-        console.log(`Bill of $${this._billAmount} paid for Patient ID: ${this._patientID}`);
-    }
-}
-
-/**
- * 4. Doctor (Concrete Class)
- * Inherits from Person and implements IManageable logic[cite: 31, 32].
- */
-class Doctor extends Person {
-    constructor(name, age, contactInfo, employeeID, specialization) {
-        super(name, age, contactInfo); [cite: 36]
-        this._employeeID = employeeID; [cite: 34]
-        this._specialization = specialization; [cite: 34]
-        this._isAvailable = true; [cite: 34]
+    @Override
+    public void saveData() { // [cite: 38]
+        System.out.println("Saving credentials for Doctor ID: " + employeeID);
     }
 
-    performRole() { [cite: 36]
-        console.log(`Dr. ${this._name} is conducting a ${this._specialization} consultation.`);
-    }
-
-    // Implementation of IManageable methods [cite: 38]
-    saveData() {
-        console.log(`Saving Doctor ${this._employeeID} credentials to database...`);
-    }
-
-    deleteData() {
-        console.log(`Removing Doctor ${this._employeeID} from registry.`);
+    @Override
+    public void deleteData() { // [cite: 38]
+        System.out.println("Removing Doctor " + employeeID + " from active registry.");
     }
 }
 
-/**
- * 5. Ward (Concrete Class)
- * Represents physical hospital location[cite: 39, 40].
- */
-class Ward {
-    static occupiedBeds = 0; // Static occupancy tracker [cite: 43]
+// Concrete Class 3: Ward [cite: 39]
+class Ward extends HospitalFacility {
+    private int wardNumber; // [cite: 42]
+    private int capacity; // [cite: 42]
+    static int occupiedBeds = 0; // [cite: 43]
 
-    constructor(wardNumber, capacity, wardType) { [cite: 45]
-        this._wardNumber = wardNumber; [cite: 42]
-        this._capacity = capacity; [cite: 42]
-        this._wardType = wardType; [cite: 42]
+    public Ward(String block, int num, int cap) {
+        super(block);
+        this.wardNumber = num;
+        this.capacity = cap;
     }
 
-    checkAvailability() { [cite: 46]
-        return Ward.occupiedBeds < this._capacity;
-    }
-
-    assignPatient() { [cite: 48]
-        if (this.checkAvailability()) {
-            Ward.occupiedBeds++;
-            console.log(`Patient assigned to Ward ${this._wardNumber}. Total occupancy: ${Ward.occupiedBeds}`);
-        } else {
-            console.log("Ward is full!");
+    public void assignPatient() { // [cite: 48]
+        if (occupiedBeds < capacity) {
+            occupiedBeds++;
+            System.out.println("Patient assigned to Ward " + wardNumber);
         }
     }
+
+    @Override
+    public void performMaintenance() {
+        System.out.println("Sanitizing Ward " + wardNumber + " in Block " + locationBlock);
+    }
 }
+public class HospitalMain {
+    public static void main(String[] args) {
+        // Instantiate Objects
+        Doctor doc = new Doctor("Christopher Kabucho", 45, "0711...", "DOC224138", "Surgeon");
+        Patient pat = new Patient("Emmanuel Okoth", 22, "0722...", "PAT224614", "Malaria");
+        Ward icu = new Ward("Emergency-Wing", 101, 5);
 
-// --- MAIN EXECUTION ---
+        // Demonstrate Inheritance and Polymorphism
+        System.out.println("--- System Activity ---");
+        doc.performRole();
+        pat.performRole();
 
-// 1. Create Objects
-const doc1 = new Doctor("Christopher Kabucho", 45, "doc.chris@hospital.com", "DOC001", "Cardiology");
-const pat1 = new Patient("Emmanuel Okoth", 28, "emman.ok@mail.com", "PAT555", "Flu");
-const icuWard = new Ward(101, 2, "ICU");
+        // Demonstrate Interface usage
+        System.out.println("\n--- Database & Billing ---");
+        doc.saveData();
+        pat.calculateFinalCharges();
+        pat.printInvoice();
 
-// 2. Demonstrate Inheritance and Method Overriding
-console.log(`--- Hospital System Log ---`);
-doc1.performRole(); // Dr. Christopher Kabucho is conducting a Cardiology consultation.
-pat1.performRole(); // Patient Emmanuel Okoth is recovering from Flu.
-
-// 3. Demonstrate Encapsulation and Concrete Methods
-pat1.updateContact("new.email@okoth.com");
-
-// 4. Demonstrate Interface implementation
-doc1.saveData();
-
-// 5. Demonstrate Static Attributes and Ward Logic
-icuWard.assignPatient();
-console.log(`Total people registered in system: ${Person.totalPeopleCount}`);
+        // Demonstrate Static Attributes & Encapsulation
+        System.out.println("\n--- Statistics ---");
+        icu.assignPatient();
+        System.out.println("Total People in System: " + Person.totalPeopleCount);
+        
+        // Group Members: [cite: 50, 51, 52, 53, 54, 55]
+    }
+}
