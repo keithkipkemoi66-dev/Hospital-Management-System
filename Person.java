@@ -9,7 +9,6 @@ public abstract class Person {
         this.id = id;
     }
 
-    // Encapsulation
     public String getName() {
         return name;
     }
