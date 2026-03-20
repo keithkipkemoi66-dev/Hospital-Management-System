@@ -1,6 +1,6 @@
 package HOSPITALMANAGEMENTSYSTEM;
 
-public class Nurse extends HospitalStaff implements MedicalAction {
+public class Nurse extends Employee implements MedicalAction {
     private int floorLevel;
 
     public Nurse(String name, int id, double salary, int floorLevel) {
@@ -10,11 +10,11 @@ public class Nurse extends HospitalStaff implements MedicalAction {
 
     @Override
     public void displayInfo() {
-        System.out.println("[Nurse] " + getName() + " | Stationed at Floor: " + floorLevel);
+        System.out.println("[Nurse] " + getName() + " (ID: " + getId() + ") | Assigned Floor: " + floorLevel);
     }
 
     @Override
     public void performDuty() {
-        System.out.println(getName() + " is administering medication.");
+        System.out.println("Nurse " + getName() + " is administering medication.");
     }
 }
