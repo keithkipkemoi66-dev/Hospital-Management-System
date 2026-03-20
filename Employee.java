@@ -1,10 +1,10 @@
 package HOSPITALMANAGEMENTSYSTEM;
 
-public abstract class Employee extends HospitalStaff implements Payable {
+public abstract class Employee extends Person {
     private double salary;
 
     public Employee(String name, int id, double salary) {
-        super(name, id); // Use of super to call parent constructor
+        super(name, id); 
         this.salary = salary;
     }
 
